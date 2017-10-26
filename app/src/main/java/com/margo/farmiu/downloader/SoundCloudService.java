@@ -19,7 +19,7 @@ import rx.Observable;
  */
 
 public interface SoundCloudService {
-    String CLIENT_ID = "5f016c08c2201881c4217afd5f52e065";
+   
     //String CLIENT_ID = "JlZIsxg2hY5WnBgtn3jfS0UYCl0K8DOg";
     String SOUND_ClOUD_API = "http://api.soundcloud.com/";
 
