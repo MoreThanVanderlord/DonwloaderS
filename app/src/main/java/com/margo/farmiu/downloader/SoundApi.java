@@ -96,25 +96,28 @@ public class SoundApi {
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(Playlist::getTracks)
                 .flatMap(tracks -> Observable.from(tracks))
-                .map(track ->  downloadFromLink(track, track.getId(),
+                .flatMap(track ->  downloadFromLink(track, track.getId(),
                         getRetrofit(track.getId()).create(SoundCloudDownloadService.class)))
-                .subscribe(new Subscriber<Observable<File>>() {
-                    @Override
-                    public void onCompleted() {
+               .subscribe(new Subscriber<File>() {
+                   @Override
+                   public void onCompleted() {
+                       mActivity.setTextStringViewText("A");
 
-                    }
+                   }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        mActivity.setTextStringViewText(e.toString());
+                   @Override
+                   public void onError(Throwable e) {
+                       mActivity.setTextStringViewText(e.toString());
+                   }
 
-                    }
+                   @Override
+                   public void onNext(File file) {
+                       mActivity.setTextStringViewText("A");
 
-                    @Override
-                    public void onNext(Observable<File> fileObservable) {
+                   }
+               });
 
-                    }
-                });
+
     }
 
     private void download(String trackUrl) {
@@ -186,7 +189,9 @@ public class SoundApi {
 
     private Observable<File> downloadFromLink(Track track, String identifier, SoundCloudDownloadService soundCloudDownloadService) {
 
+
             return mSoundCloudService.getLink(track.getId(), SoundCloudService.CLIENT_ID)
+                .subscribeOn(Schedulers.io())
                 .map(url -> (url.getHttp_mp3_128_url().getPath().substring(1) + "&" + url.getHttp_mp3_128_url().getQuery())
                 .split("=|&"))
                 .flatMap(urls -> {
